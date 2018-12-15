@@ -16,7 +16,6 @@ def print_item(item):
     pprint(item)
     return item
 
-
 if __name__ == '__main__':
     db = DBConn()
     spider = IMDBSpider()
