@@ -20,11 +20,11 @@ class RequestsEngine(object):
         self.response_hooks = []
 
     def add_item_hook(self, hook):
-        """Register a hook to items"""
+        """Registers a hook to items"""
         self.item_hooks.append(hook)
 
     def add_response_hook(self, hook):
-        """Register a hook to responses"""
+        """Registers a hook to responses"""
         self.response_hooks.append(hook)
 
     def run(self):

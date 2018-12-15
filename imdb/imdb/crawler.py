@@ -4,7 +4,7 @@ from parsel import Selector
 
 from imdb.engine import RequestsEngine
 from imdb.spider import IMDBSpider
-
+from imdb.persistence import DBConn
 
 def add_selector(response):
     selector = Selector(text=response.text)
@@ -18,10 +18,12 @@ def print_item(item):
 
 
 if __name__ == '__main__':
+    db = DBConn()
     spider = IMDBSpider()
     engine = RequestsEngine(spider.start_request())
 
     engine.add_response_hook(add_selector)
     engine.add_item_hook(print_item)
+    engine.add_item_hook(db.persist) 
 
     engine.run()
