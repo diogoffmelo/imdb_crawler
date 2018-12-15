@@ -7,8 +7,12 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
     [x] - Criar módulo e setup.
 
 [ ] - Craweler
+    [x] - engine
+    [x] - parser
+    [ ] - salvar arquivo json
+    [ ] - adicoinar mongodb
 
-[ ] - Api para o banco de dados
+[ ] - Api para os dados
 
 [ ] - Estatísticas
 
