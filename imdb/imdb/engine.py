@@ -1,6 +1,7 @@
 from collections import deque
 
 import requests
+from parsel import Selector
 
 from imdb.models import Request, Item
 
@@ -17,7 +18,13 @@ class RequestsEngine(object):
         self.queue = deque(startRequests)
         self.visited = set()
         self.item_hooks = []
-        self.response_hooks = []
+        self.response_hooks = [self._set_selector_hook]
+
+    def _set_selector_hook(self, response):
+        selector = Selector(text=response.text)
+        setattr(response, 'selector', selector)
+        setattr(response, 'xpath', selector.xpath)
+        return response
 
     def add_item_hook(self, hook):
         """Registers a hook to items"""

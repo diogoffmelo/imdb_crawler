@@ -12,12 +12,12 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
     [x] - Criar módulo e setup.
     [ ] - Submódulo para a view.
 
-[ ] - Craweler
+[ ] - Crawler
 
     [x] - engine.
     [x] - parser.
     [x] - salvar arquivo json.
-    [ ] - adicoinar mongodb.
+    [x] - adicoinar mongodb.
 
 [ ] - Api para os dados
 
@@ -25,10 +25,14 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
     [x] - View para estatisticas.
     [ ] - View para logs.
 
-[ ] - Estatísticas
+[x] - Estatísticas
 
     [x] - Classes para manipulação de vetores.
     [x] - Estatística condicional.
+
+[ ] - Testes
+
+    [x] - Estatísticas
 
 [ ] - Dockerização
 

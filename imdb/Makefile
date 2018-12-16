@@ -2,10 +2,12 @@ TESTS_DIR = ./testes/
 
 
 install-dev:
+	@pip install -r requirements.dev.txt
 	@pip install --upgrade --force-reinstall -e .
 
 install-prod:
-	@pip install --upgrade --force-reinstall
+	@pip install -r requirements.prod.txt
+	@pip install --upgrade --force-reinstall .
 
 test:
 	@py.test --rootdir=$(TESTS_DIR)

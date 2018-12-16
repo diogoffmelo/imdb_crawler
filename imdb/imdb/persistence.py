@@ -5,11 +5,18 @@ import json
 class DBConn():
     def __init__(self, url):
         self.url = url
+        self.seen = set()
 
     def persist(self):
         raise NotImplementedError()
 
     def fetchall(self):
+        raise NotImplementedError()
+
+    def count(self):
+        raise NotImplementedError()
+
+    def find(self, skip=0, limit=50):
         raise NotImplementedError()
 
     def close(self):
@@ -27,15 +34,23 @@ class MongoDB(DBConn):
         )
 
     def persist(self, item):
-        item = self.filmes.update(
-            {'url': item['url']}, 
-            item,
-            upsert=True
-        )
+        if item['url'] not in self.seen:
+            self.seen.add(item['url'])
+            self.filmes.update(
+                {'url': item['url']},
+                item,
+                upsert=True
+            )
         return item
 
     def fetchall(self):
         return self.filmes.find()
+
+    def find(self, skip=0, limit=50):
+        return self.filmes.find(skip=skip, limit=limit)
+
+    def count(self):
+        return self.filmes.count()
 
     def close(self):
         pass
@@ -44,20 +59,33 @@ class MongoDB(DBConn):
 class JsonFile(DBConn):
     def __init__(self, url):
         DBConn.__init__(self, url)
-        self.items = []
+        self.filmes = []
 
     def persist(self, item):
-        self.items.append(item)
-        with open(self.url, 'w') as f:
-            json.dump(self.items, f)
+        if item['url'] not in self.seen:
+            self.seen.add(item['url'])
+            item['_id'] = str(len(self.seen))
+            self.filmes.append(item)
+            with open(self.url, 'w') as f:
+                json.dump(self.filmes, f)
 
         return item
 
     def fetchall(self):
         with open(self.url, 'r') as f:
-            self.items = json.load(f)
+            self.filmes = json.load(f)
+            for item in self.filmes:
+                self.seen.add(item['url'])
 
-        return self.items
+        return self.filmes
+
+    def find(self, skip=0, limit=50):
+        self.fetchall(self)
+        return self.filmes[skip:min(len(self.filmes), skip+limit)]
+
+    def count(self):
+        self.fetchall(self)
+        return len(self.filmes)
 
     def close(self):
         pass
