@@ -3,16 +3,20 @@ import json
 import tornado.ioloop
 import tornado.web
 
-from imdb.persistence import DBConn
+from imdb.persistence import MongoDB
 from imdb.numeric import StatVector
 
-db = DBConn()
-
+db = MongoDB('mongodb://localhost:27017/')
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(db.fetchall()))
+        
+        objs = db.fetchall()
+        for obj in objs:
+            obj['_id'] = str(obj['_id'])
+        
+        self.write(json.dumps(objs))
 
 
 class StatsHandler(tornado.web.RequestHandler):

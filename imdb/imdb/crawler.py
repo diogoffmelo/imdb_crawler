@@ -4,7 +4,7 @@ from parsel import Selector
 
 from imdb.engine import RequestsEngine
 from imdb.spider import IMDBSpider
-from imdb.persistence import DBConn
+from imdb.persistence import MongoDB
 
 
 def add_selector(response):
@@ -20,7 +20,7 @@ def print_item(item):
 
 
 if __name__ == '__main__':
-    db = DBConn()
+    db = MongoDB('mongodb://localhost:27017/')
     spider = IMDBSpider()
     engine = RequestsEngine(spider.start_requests())
 
