@@ -18,14 +18,20 @@ class DBConn():
 
 class MongoDB(DBConn):
     def __init__(self, url):
-        DBConn.__ini__(self, url)
+        DBConn.__init__(self, url)
         self.cli = pymongo.MongoClient(self.url)
         self.db = self.cli['imdb']
         self.filmes = self.db['filmes']
-        self.filmes.create_index([('url', pymongo.TEXT)], unique=True)
+        self.filmes.create_index(
+            [('url', pymongo.TEXT)],
+        )
 
     def persist(self, item):
-        item = self.filmes.insert_one(item)
+        item = self.filmes.update(
+            {'url': item['url']}, 
+            item,
+            upsert=True
+        )
         return item
 
     def fetchall(self):
@@ -37,6 +43,7 @@ class MongoDB(DBConn):
 
 class JsonFile(DBConn):
     def __init__(self, url):
+        DBConn.__init__(self, url)
         self.items = []
 
     def persist(self, item):

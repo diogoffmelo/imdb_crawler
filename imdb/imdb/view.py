@@ -12,7 +12,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
         
-        objs = db.fetchall()
+        objs = list(db.fetchall())
         for obj in objs:
             obj['_id'] = str(obj['_id'])
         
