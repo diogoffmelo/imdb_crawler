@@ -15,7 +15,7 @@ class Vector(list):
         if isinstance(other, Vector):
             return self.dot(other)
 
-        return self.map(lambda x: x * other)        
+        return self.map(lambda x: x * other)
 
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -31,7 +31,7 @@ class Vector(list):
 
     def __neg__(self):
         return Vector(-x for x in self)
-    
+
     def __sub__(self, other):
         return self + (-other)
 

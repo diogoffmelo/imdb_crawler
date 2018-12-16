@@ -17,7 +17,7 @@ class IMDBSpider():
 
     def parse_movies_list(self, response):
         for movie_selector in response.xpath(XPATH_MOVIE_DETAILS):
-            
+
             # validação.....
             # status = movie_selector.xpath('./p[@class="text-muted "]/b/text()').extract_first()
             # if status in ['Filming', 'Post-production']:
@@ -35,19 +35,20 @@ class IMDBSpider():
             # if 'The Limit' in titulo:
             #     import ipdb; ipdb.set_trace()
 
-
             # titulo
             titulo = movie_selector.xpath('./h3/a/text()').extract_first()
 
             url = movie_selector.xpath('./h3/a/@href').extract_first()
 
-
             # rating
-            rating = movie_selector.xpath('.//div/div[@class="inline-block ratings-imdb-rating"]/@data-value').extract_first()
-            
-            genres = movie_selector.xpath('./p[@class="text-muted "]/span[@class="genre"]/text()').extract_first().split(',')
+            rating = movie_selector.xpath(
+                './/div/div[@class="inline-block ratings-imdb-rating"]/@data-value').extract_first()
 
-            duracao = movie_selector.xpath('./p[@class="text-muted "]/span[@class="runtime"]/text()').extract_first()
+            genres = movie_selector.xpath(
+                './p[@class="text-muted "]/span[@class="genre"]/text()').extract_first().split(',')
+
+            duracao = movie_selector.xpath(
+                './p[@class="text-muted "]/span[@class="runtime"]/text()').extract_first()
 
             nodes = movie_selector.xpath('./p[@class=""]/node()')
             nodes[0].re('Direct')
@@ -61,7 +62,7 @@ class IMDBSpider():
                     coll = stars
                 elif node.xpath('./@href'):
                     coll.append({
-                        'url': node.xpath('./@href').extract_first(), 
+                        'url': node.xpath('./@href').extract_first(),
                         'name': node.xpath('./text()').extract_first(),
                     })
 

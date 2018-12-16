@@ -7,5 +7,6 @@ class Request():
     def __hash__(self):
         return hash(self.url)
 
+
 class Item(dict):
     pass

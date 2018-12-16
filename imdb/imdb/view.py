@@ -7,6 +7,8 @@ from imdb.persistence import DBConn
 from imdb.numeric import StatVector
 
 db = DBConn()
+
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
@@ -20,7 +22,8 @@ class StatsHandler(tornado.web.RequestHandler):
         genres_list = set()
 
         for e in db.fetchall():
-            if not e['rating']: continue
+            if not e['rating']:
+                continue
 
             genres_list |= set(e['genero'])
             e['rating'] = float(e['rating'])
@@ -29,7 +32,6 @@ class StatsHandler(tornado.web.RequestHandler):
         rates = StatVector(
             float(e['rating']) for e in entities_list if e['rating']
         )
-
 
         entities = StatVector(entities_list)
         genre_stats = {}
@@ -56,14 +58,16 @@ class StatsHandler(tornado.web.RequestHandler):
                     e for e in entities_list if not(e['rating'])
                 ])
             },
-            'rates_by_genre':genre_stats,
+            'rates_by_genre': genre_stats,
         })
+
 
 def make_app():
     return tornado.web.Application([
         ("/", MainHandler),
         ("/stats", StatsHandler),
     ])
+
 
 if __name__ == "__main__":
     app = make_app()
