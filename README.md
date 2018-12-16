@@ -20,7 +20,7 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
 
 [ ] - Api para os dados
 
-    [x] - view dos dados reaspados
+    [x] - view dos dados raspados
 
 [ ] - Estatísticas
 

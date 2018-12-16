@@ -19,7 +19,7 @@ def print_item(item):
 if __name__ == '__main__':
     db = DBConn()
     spider = IMDBSpider()
-    engine = RequestsEngine(spider.start_request())
+    engine = RequestsEngine(spider.start_requests())
 
     engine.add_response_hook(add_selector)
     engine.add_item_hook(print_item)
