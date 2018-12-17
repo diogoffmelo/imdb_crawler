@@ -1,16 +1,17 @@
 import json
+import logging
 
-import tornado.ioloop
-from tornado.web import RequestHandler, Application
+from tornado.web import RequestHandler
 
-from imdb.persistence import DBManager
 from imdb.numeric import StatVector
+
+logger = logging.getLogger(__name__)
 
 ERROR_JSON = {'status': 'InvalidArgument'}
 
 DESCRIPTION_JSON = {
     '/find?<skip=0>&<limit=50>':
-    'Lista os filmes salvos banco de dados.',
+        'Lista os filmes salvos banco de dados.',
     '/findall':
         'Lista todos os filmes salvos banco de dados (pode demorar).',
     '/stats':
@@ -42,7 +43,7 @@ class FindHandler(AbstractHandler):
             self.write(json.dumps(ERROR_JSON))
             return
 
-        objs = list(db.find(skip=skip, limit=limit))
+        objs = list(self.db.find(skip=skip, limit=limit))
         for obj in objs:
             obj['_id'] = str(obj['_id'])
 
@@ -52,7 +53,7 @@ class FindHandler(AbstractHandler):
 class FindAllHandler(AbstractHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        objs = list(db.fetchall())
+        objs = list(self.db.fetchall())
         for obj in objs:
             obj['_id'] = str(obj['_id'])
 
@@ -62,7 +63,7 @@ class FindAllHandler(AbstractHandler):
 class StatsHandler(AbstractHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        entities = StatVector(db.fetchall())
+        entities = StatVector(self.db.fetchall())
 
         genres = set()
         for genres_list in entities.map(lambda x: x['genero']):
@@ -79,7 +80,8 @@ class StatsHandler(AbstractHandler):
                 'min': rates.min(),
                 'max': rates.max(),
             }
-        except Exception:
+        except Exception as e:
+            logger.exception(e)
             rate_stats = {
                 'mean': None,
                 'std': None,
@@ -106,7 +108,8 @@ class StatsHandler(AbstractHandler):
                 'min': durations.min(),
                 'max': durations.max(),
             }
-        except Exception:
+        except Exception as e:
+            logger.exception(e)
             duration_stats = {
                 'mean': None,
                 'std': None,
@@ -134,7 +137,8 @@ class StatsHandler(AbstractHandler):
                     'min': duration_genres.min(),
                     'max': duration_genres.max(),
                 }
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 genre_stats[g]['duration'] = {
                     'mean': None,
                     'std': None,
@@ -152,7 +156,8 @@ class StatsHandler(AbstractHandler):
                     'min': rates_genre.min(),
                     'max': rates_genre.max(),
                 }
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 genre_stats[g]['rates'] = {
                     'p(rate>8|genre)': None,
                     'mean': None,
@@ -162,21 +167,8 @@ class StatsHandler(AbstractHandler):
                 }
 
         self.write({
+            'total': len(entities),
             'rates': rate_stats,
             'duration': duration_stats,
             'stats_by_genre': genre_stats,
         })
-
-
-if __name__ == "__main__":
-    db = DBManager.getConnection('mongodb://localhost:27017/')
-
-    app = Application([
-        ("/", DesciptionHandler, {'db': db}),
-        ("/find", FindHandler, {'db': db}),
-        ("/findall", FindAllHandler, {'db': db}),
-        ("/stats", StatsHandler, {'db': db}),
-    ])
-
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()

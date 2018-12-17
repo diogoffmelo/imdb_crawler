@@ -38,8 +38,8 @@ class IMDBSpider():
     base_url = BASE_URL
     start_url = URL_GENRES
 
-    def __init__(self, pagination=1):
-        self.pagination = pagination
+    def __init__(self, paginacao=1):
+        self.paginacao = paginacao
 
     def start_requests(self):
         return [Request(self.start_url, self.parse_genres)]
@@ -51,7 +51,7 @@ class IMDBSpider():
             logger.info('')
             link = clear_url(link, self.base_url, ('genres', 'title_type'))
             link += '&sort=num_votes,desc'
-            for page in range(self.pagination):
+            for page in range(self.paginacao):
                 ulink = '{}&start={}'.format(link, 1 + 50*page)
                 yield Request(ulink, self.parse_movies)
 

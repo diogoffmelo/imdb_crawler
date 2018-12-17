@@ -10,7 +10,7 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
 [x] - Criar repositório
 
     [x] - Criar módulo e setup.
-    [ ] - Submódulo para a view.
+    [x] - Submódulo para as views.
 
 
 [ ] - Crawler
@@ -33,7 +33,7 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
 
 [ ] - Logs
 
-    [ ] - logs para o crawler
+    [x] - logs para o crawler
     [ ] - logs para a view
 
 
