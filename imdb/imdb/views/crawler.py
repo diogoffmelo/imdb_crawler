@@ -8,7 +8,7 @@ DESCRIPTION_JSON = {
     '/status':
         'Estado da engine (crawler).',
     '/start?<paginacao=1>':
-        '(Re)Inicializa a engina com a profundidade especificada.',
+        '(Re)Inicializa a engine com a profundidade especificada.',
 }
 
 

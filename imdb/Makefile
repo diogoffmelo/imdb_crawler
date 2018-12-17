@@ -33,3 +33,14 @@ clean:
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
 	@find . -name '__pycache__' -exec rm -fr {} +
+
+
+docker-build:
+	@docker pull mongo:4.1
+	@docker build -f ./compose/Dockerfile.stats -t stats/image  .
+	@docker build -f ./compose/Dockerfile.crawler -t crawler/image  .
+
+docker-run:
+	@docker run --network="host" -d -p 8889:8889 crawler/image
+	@docker run --network="host" -d -p 8888:8888 stats/image
+	@docker run --network="host" -d -p 27017:27017 mongo:4.1

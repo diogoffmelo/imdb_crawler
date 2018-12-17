@@ -1,0 +1,17 @@
+FROM python:3.6
+
+COPY ./ /app
+
+WORKDIR /app
+
+RUN pip install --upgrade pip
+
+RUN make install-prod
+
+ENV DBURL ${DBURL:-mongodb://localhost:27017/}
+
+ENV CRAWLER_PORT ${CRAWLER_PORT:-8889}
+
+EXPOSE $CRAWLER_PORT
+
+CMD ["python", "./scripts/crawler_app.py"]

@@ -42,4 +42,6 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
     [x] - Estatísticas
 
 [ ] - Dockerização
+    [x] - Docker via make (make docker-build, make docker-run)
+    [ ] - Docker-compose
 

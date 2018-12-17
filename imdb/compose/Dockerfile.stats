@@ -1,0 +1,17 @@
+FROM python:3.6
+
+COPY ./ /app
+
+WORKDIR /app
+
+RUN pip install --upgrade pip
+
+RUN make install-prod
+
+ENV DBURL ${DBURL:-mongodb://localhost:27017/}
+
+ENV STATS_PORT ${STATS_PORT:-8888}
+
+EXPOSE $STATS_PORT
+
+CMD ["python", "./scripts/stats_app.py"]
