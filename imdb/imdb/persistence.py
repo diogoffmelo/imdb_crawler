@@ -1,5 +1,28 @@
-import pymongo
 import json
+from urllib import parse
+import logging
+
+import pymongo
+
+
+logger = logging.getLogger(__name__)
+
+
+class DBManager():
+    @staticmethod
+    def getConnection(url):
+        logger.info('Configurando banco de dados...')
+
+        parsed = parse.urlparse(url)
+        if parsed.scheme == 'mongodb':
+            db = MongoDB(url)
+        elif parsed.scheme == 'json':
+            db = JsonFile(parsed.netloc + parsed.path)
+        else:
+            raise Exception('Banco de dados não suportado.')
+
+        logger.info('Banco de dados configurado...')
+        return db
 
 
 class DBConn():

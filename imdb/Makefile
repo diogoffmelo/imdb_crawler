@@ -13,7 +13,7 @@ test:
 	@py.test --rootdir=$(TESTS_DIR)
 
 cov:
-	@py.test --cov-report term-missing --cov=imdb $(TESTS_DIR)
+	@py.test --cov-report term-missing --cov-config .coveragerc --cov=imdb $(TESTS_DIR)
 	@rm -f ./media/coverage.svg
 	@coverage-badge -o ./media/coverage.svg
 

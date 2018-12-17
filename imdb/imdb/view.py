@@ -3,7 +3,7 @@ import json
 import tornado.ioloop
 from tornado.web import RequestHandler, Application
 
-from imdb.persistence import MongoDB
+from imdb.persistence import DBManager
 from imdb.numeric import StatVector
 
 ERROR_JSON = {'status': 'InvalidArgument'}
@@ -169,7 +169,7 @@ class StatsHandler(AbstractHandler):
 
 
 if __name__ == "__main__":
-    db = MongoDB('mongodb://localhost:27017/')
+    db = DBManager.getConnection('mongodb://localhost:27017/')
 
     app = Application([
         ("/", DesciptionHandler, {'db': db}),

@@ -12,6 +12,7 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
     [x] - Criar módulo e setup.
     [ ] - Submódulo para a view.
 
+
 [ ] - Crawler
 
     [x] - engine.
@@ -29,6 +30,12 @@ Crawler do site de filmes [IMDB](https://www.imdb.com/).
 
     [x] - Classes para manipulação de vetores.
     [x] - Estatística condicional.
+
+[ ] - Logs
+
+    [ ] - logs para o crawler
+    [ ] - logs para a view
+
 
 [ ] - Testes
 

@@ -1,7 +1,9 @@
+import logging
 from urllib import parse
 
 from imdb.models import Item, Request
 
+logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://www.imdb.com'
 
@@ -43,8 +45,10 @@ class IMDBSpider():
         return [Request(self.start_url, self.parse_genres)]
 
     def parse_genres(self, response):
+        logger.info('Processando {}'.format(response.url))
         links = response.xpath(XPATH_LINKS_GENRES).extract()
         for link in links:
+            logger.info('')
             link = clear_url(link, self.base_url, ('genres', 'title_type'))
             link += '&sort=num_votes,desc'
             for page in range(self.pagination):
@@ -52,6 +56,7 @@ class IMDBSpider():
                 yield Request(ulink, self.parse_movies)
 
     def parse_movies(self, response):
+        logger.info('Processando {}'.format(response.url))
         for movie_selector in response.xpath(XPATH_MOVIE_DETAILS):
             titulo = movie_selector.xpath('./h3/a/text()').extract_first()
 
@@ -103,4 +108,5 @@ class IMDBSpider():
                 '_raw': movie_selector.extract()
             }
 
+            logger.info('Extratido item em {}'.format(movie['url']))
             yield Item(movie)

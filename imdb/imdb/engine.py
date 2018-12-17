@@ -1,3 +1,4 @@
+import logging
 from collections import deque
 
 import requests
@@ -5,6 +6,7 @@ from parsel import Selector
 
 from imdb.models import Request, Item
 
+logger = logging.getLogger(__name__)
 
 class RequestsEngine(object):
     """
@@ -14,11 +16,24 @@ class RequestsEngine(object):
     Hooks can be setted do responses and Items. 
     """
 
-    def __init__(self, startRequests):
-        self.queue = deque(startRequests)
+    def __init__(self, spider_class):
+        self.spider_class = spider_class
+        self.queue = deque()
         self.visited = set()
         self.item_hooks = []
         self.response_hooks = [self._set_selector_hook]
+        self.running = False
+        self.stats = {
+            'response_count': 0,
+            'response_error': 0,
+            'item_error': 0,
+            'items_count': 0,
+        }
+
+    def get_status(self):
+        stats = self.stats.copy()
+        stats.update({'running': self.running})
+        return stats
 
     def _set_selector_hook(self, response):
         selector = Selector(text=response.text)
@@ -34,20 +49,43 @@ class RequestsEngine(object):
         """Registers a hook to responses"""
         self.response_hooks.append(hook)
 
-    def run(self):
+    def run(self, *args, **kwargs):
+        self.running = True
+        spider = self.spider_class(**kwargs)
+        self.queue.extend(spider.start_requests())
+        logger.info('Inicializando agendador de requisições.')
         while self.queue:
             request = self.queue.pop()
             self.visited.add(request)
 
-            response = requests.get(request.url)
+            try:
+                response = requests.get(request.url)
+                self.stats['response_count'] += 1
+            except Exception as e:
+                self.stats['response_error'] += 1
+                logger.exception(e)
+                continue
+
             for hook in self.response_hooks:
                 response = hook(response)
 
             for crop in request.callback(response):
                 if isinstance(crop, Item):
-                    for hook in self.item_hooks:
-                        crop = hook(crop)
+                    logger.info('Novo item registrado.')
+                    self.stats['items_count'] += 1
+                    try:
+                        for hook in self.item_hooks:
+                            crop = hook(crop)
+
+                    except Exception as e:
+                        self.stats['item_error'] += 1
+                        logger.exception(e)
+                        continue
 
                 elif isinstance(crop, Request):
                     if crop not in self.visited:
+                        logger.info('Nova requisição registrada.')
                         self.queue.append(crop)
+
+        logger.info('Finalizando agendador de requisições.')
+        self.running = False
